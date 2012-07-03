@@ -99,11 +99,39 @@ RetrunValue find_maximum_subarray(int* array, int start, int end)
 		return crossResult;
 }
 
+RetrunValue find_maximum_subarray_liner(int* array, int start, int end)
+{
+	RetrunValue result;
+	result.maxValue = 0x80000000;
+	result.low = start;
+	result.high = start;
+
+	int max_start = start;
+	int sum = *(array+start);
+	for(int i = start+1; i<=end; i++)
+	{
+		sum+=array[i];
+		if( array[i] > sum)
+		{   
+			max_start = i;
+			sum = array[i];
+		}
+		if(sum>result.maxValue)
+		{   
+			result.low = max_start;
+			result.maxValue = sum;
+			result.high = i;    
+		}
+	}
+	return result;
+}
+
 int _tmain(int argc, _TCHAR* argv[])
 {
 	//int array[16] = { 13, -3, -25, 20, -3, -16, -23, 18, 20, -7, 12, -5, -22, 15, -4, 7 };
+	//int length = 16;
 
-	//std::map<int, int> nums;
+	std::map<int, int> nums;
 	int length = 20000000;
 	int* array = new int[length];
 	srand(time(NULL));
@@ -127,13 +155,14 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	LARGE_INTEGER start, stop1, stop2;
 	QueryPerformanceCounter(&start);
+	RetrunValue result = find_maximum_subarray_liner(array, 0, length-1);
 	//RetrunValue result = find_maximum_subarray_brute_force(array, length);
-	//printf("brute-force max: %d, from %d to %d\n", result.maxValue, result.low, result.high);
+	printf("brute-force max: %d, from %d to %d\n", result.maxValue, result.low, result.high);
 
 	QueryPerformanceCounter(&stop1);
 
-	RetrunValue result = find_maximum_subarray(array, 0, length-1);
-	//printf("divide-and-conquer max: %d, from %d to %d\n", result.maxValue, result.low, result.high);
+	result = find_maximum_subarray(array, 0, length-1);
+	printf("divide-and-conquer max: %d, from %d to %d\n", result.maxValue, result.low, result.high);
 
 	QueryPerformanceCounter(&stop2);
 
